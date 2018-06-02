@@ -11,6 +11,7 @@ node("build") {
             sleep 1
         }
         stage("integration test") { sh "mvn integration-test" }
+        sh "docker save trainer/trainer-tracker > /tmp/trainer-tracker.tar"
     } catch(e) {
 
     } finally {
@@ -19,11 +20,19 @@ node("build") {
             dockerRemoveAllContainers(ssh)
             dockerRemoveAllOldTrainerAppImages(ssh)
         }
+        deleteDir()
     }
 }
 
 node("master") {
-    echo "hey from the master node :)"
+    def ssh = { cmd -> sh(returnStdout: true, script: cmd) }
+    sh "scp build:/tmp/trainer-tracker.tar $workspace/trainer-tracker.tar"
+    sh "scp $workspace/trainer-tracker.tar uat:/tmp/trainer-tracker.tar"
+}
+
+node("uat") {
+    sh "docker load /tmp/trainer-tracker.tar"
+    sh "docker images"
 }
 
 static def dockerRunTrainerApp(Closure ssh) {
