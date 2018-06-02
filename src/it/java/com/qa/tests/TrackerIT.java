@@ -29,7 +29,7 @@ public class TrackerIT {
 		ChromeOptions options = new ChromeOptions();
 		options.addArguments("headless");
 		options.addArguments("window-size=1200x600");
-		driver = new ChromeDriver();
+		driver = new ChromeDriver(options);
 		driver.get("http://localhost:8080/#/dashboard");
 		page = PageFactory.initElements(driver, TrackerPageIT.class);
 	}
