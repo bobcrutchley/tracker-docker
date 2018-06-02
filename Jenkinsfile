@@ -22,5 +22,5 @@ static def stopAllDockerContainers(Closure ssh) {
 }
 
 static def removeAllDockerContainers(Closure ssh) {
-    ssh "docker rm \\\$(docker ps -aq)"
+    ssh "docker rm \$(docker ps -aq)"
 }
