@@ -7,6 +7,7 @@ node("build") {
         stage("build and test") { sh "mvn clean package docker:build" }
         stage("mysql") { dockerRunMysql(ssh) }
         stage("trainer app") { dockerRunTrainerApp(ssh) }
+        ssh "curl http://localhost:8080"
         stage("integration test") { ssh "mvn integration-test" }
     } catch(e) {
 
