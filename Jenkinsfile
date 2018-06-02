@@ -7,13 +7,18 @@ node("build") {
         stage("build and test") { sh "mvn clean package docker:build" }
         stage("mysql") { dockerRunMysql(ssh) }
         stage("trainer app") { dockerRunTrainerApp(ssh) }
-        ssh "curl http://localhost:8080"
-        stage("integration test") { ssh "mvn integration-test" }
+        while(!sh(returnStdout: true, script: "docker logs trainer-app").contains("Started App")) {
+            sleep 1000
+        }
+        stage("integration test") { sh "mvn integration-test" }
     } catch(e) {
 
     } finally {
-        stopAllDockerContainers(ssh)
-        removeAllDockerContainers(ssh)
+        stage("clean up") {
+            dockerRemoveAllOldTrainerAppImages(ssh)
+            dockerStopAllContainers(ssh)
+            dockerRemoveAllContainers(ssh)
+        }
     }
 }
 
@@ -25,10 +30,14 @@ static def dockerRunMysql(Closure ssh) {
     ssh "docker run --name trainer-mysql -e MYSQL_ROOT_PASSWORD=password -e MYSQL_DATABASE=trainer -e MYSQL_USER=trainer_user -e MYSQL_PASSWORD=trainer_pass -d mysql:5.6"
 }
 
-static def stopAllDockerContainers(Closure ssh) {
+static def dockerStopAllContainers(Closure ssh) {
     ssh "docker stop \$(docker ps -aq)"
 }
 
-static def removeAllDockerContainers(Closure ssh) {
+static def dockerRemoveAllContainers(Closure ssh) {
     ssh "docker rm \$(docker ps -aq)"
+}
+
+static def dockerRemoveAllOldTrainerAppImages(Closure ssh) {
+    ssh "docker rmi \$(docker images | grep none | awk '{ print \$3 }')"
 }
