@@ -8,6 +8,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.support.PageFactory;
 
 import com.qa.tracker.TrackerPageIT;
@@ -25,6 +26,9 @@ public class TrackerIT {
         String driverPath = (System.getProperty("os.name").equals("Linux"))
                 ? ChromeDriverPath.LINUX.value : ChromeDriverPath.WINDOWS.value;
 		System.setProperty("webdriver.chrome.driver", driverPath);
+		ChromeOptions options = new ChromeOptions();
+		options.addArguments("headless");
+		options.addArguments("window-size=1200x600");
 		driver = new ChromeDriver();
 		driver.get("http://localhost:8080/#/dashboard");
 		page = PageFactory.initElements(driver, TrackerPageIT.class);
