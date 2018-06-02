@@ -22,6 +22,10 @@ node("build") {
     }
 }
 
+node("master") {
+    echo "hey from the master node"
+}
+
 static def dockerRunTrainerApp(Closure ssh) {
     ssh "docker run -p 8080:8080 --name trainer-app --link trainer-mysql:mysql -d trainer/trainer-tracker"
 }
