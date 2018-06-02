@@ -14,13 +14,13 @@ node("build") {
         stopAllDockerContainers(ssh)
         removeAllDockerContainers(ssh)
     }
-    sh "docker ps"
+    ssh "docker ps"
 }
 
 static def stopAllDockerContainers(Closure ssh) {
-    sh "docker docker stop \$(docker ps -aq)"
+    ssh "docker docker stop \$(docker ps -aq)"
 }
 
 static def removeAllDockerContainers(Closure ssh) {
-    sh "docker rm \\\$(docker ps -aq)"
+    ssh "docker rm \\\$(docker ps -aq)"
 }
