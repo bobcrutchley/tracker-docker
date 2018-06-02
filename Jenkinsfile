@@ -1,6 +1,6 @@
 node("build") {
     deleteDir()
-    def ssh = { cmd -> sh cmd }
+    def ssh = { cmd -> sh(returnStdout: true, script: cmd) }
     echo "Running on build node"
     try {
         checkout scm
@@ -39,5 +39,6 @@ static def dockerRemoveAllContainers(Closure ssh) {
 }
 
 static def dockerRemoveAllOldTrainerAppImages(Closure ssh) {
-    ssh "docker rmi \$(docker images | grep none | awk '{ print \$3 }')"
+    def oldImages = ssh("docker images | grep none | awk '{ print \$3 }'").replaceAll("\n", " ")
+    if (oldImages) ssh "docker rmi $oldImages"
 }
