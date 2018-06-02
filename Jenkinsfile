@@ -4,18 +4,16 @@ node("build") {
     echo "Running on build node"
     try {
         checkout scm
-        sh "git branch"
-        sh "mvn clean package docker:build"
-        dockerRunMysql(ssh)
-        dockerRunTrainerApp(ssh)
-        ssh "docker ps"
+        stage("build and test") { sh "mvn clean package docker:build" }
+        stage("mysql") { dockerRunMysql(ssh) }
+        stage("trainer app") { dockerRunTrainerApp(ssh) }
+        stage("integration test") { ssh "mvn integration-test" }
     } catch(e) {
 
     } finally {
         stopAllDockerContainers(ssh)
         removeAllDockerContainers(ssh)
     }
-    ssh "docker ps"
 }
 
 static def dockerRunTrainerApp(Closure ssh) {
