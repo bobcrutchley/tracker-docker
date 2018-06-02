@@ -8,7 +8,7 @@ node("build") {
         stage("mysql") { dockerRunMysql(ssh) }
         stage("trainer app") { dockerRunTrainerApp(ssh) }
         while(!sh(returnStdout: true, script: "docker logs trainer-app").contains("Started App")) {
-            sleep 1000
+            sleep 1
         }
         stage("integration test") { sh "mvn integration-test" }
     } catch(e) {
