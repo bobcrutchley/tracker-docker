@@ -23,7 +23,7 @@ node("build") {
 }
 
 node("master") {
-    echo "hey from the master node"
+    echo "hey from the master node :)"
 }
 
 static def dockerRunTrainerApp(Closure ssh) {
