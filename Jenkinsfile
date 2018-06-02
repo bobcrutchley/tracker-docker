@@ -15,9 +15,9 @@ node("build") {
 
     } finally {
         stage("clean up") {
-            dockerRemoveAllOldTrainerAppImages(ssh)
             dockerStopAllContainers(ssh)
             dockerRemoveAllContainers(ssh)
+            dockerRemoveAllOldTrainerAppImages(ssh)
         }
     }
 }
