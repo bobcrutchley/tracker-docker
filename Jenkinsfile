@@ -37,7 +37,7 @@ node("uat") {
     dockerStopAllContainers(ssh)
     dockerRemoveAllContainers(ssh)
     dockerRemoveAllOldTrainerAppImages(ssh)
-    sh "docker import /tmp/trainer-tracker.tar"
+    sh "docker image import /tmp/trainer-tracker.tar"
     sh "rm -rf /tmp/trainer-tracker.tar"
     dockerRunMysql(ssh)
     dockerRunTrainerApp(ssh)
