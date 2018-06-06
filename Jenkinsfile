@@ -33,10 +33,14 @@ node("master") {
 }
 
 node("uat") {
-    sh "cp /tmp/trainer-tracker.tar $workspace/trainer-tracker.tar"
-    sh "ls -l"
-//    sh "docker load /tmp/trainer-tracker.tar"
-//    sh "docker images"
+    def ssh = { cmd -> sh(returnStdout: true, script: cmd) }
+    dockerStopAllContainers(ssh)
+    dockerRemoveAllContainers(ssh)
+    dockerRemoveAllOldTrainerAppImages(ssh)
+    sh "docker load /tmp/trainer-tracker.tar"
+    sh "rm -rf /tmp/trainer-tracker.tar"
+    dockerRunMysql(ssh)
+    dockerRunTrainerApp(ssh)
 }
 
 static def dockerRunTrainerApp(Closure ssh) {
