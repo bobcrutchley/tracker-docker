@@ -12,6 +12,7 @@ node("build") {
         }
         stage("integration test") { sh "mvn integration-test" }
         sh "docker save trainer/trainer-tracker > $workspace/trainer-tracker.tar"
+        sh "ls -l"
         archiveArtifacts "$workspace/trainer-tracker.tar"
     } catch(e) {
         println "Build error:\n $e"
