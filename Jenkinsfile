@@ -52,11 +52,13 @@ static def dockerRunMysql(Closure ssh) {
 }
 
 static def dockerStopAllContainers(Closure ssh) {
-    ssh "docker stop \$(docker ps -aq)"
+    def containers = ssh("docker ps -aq")
+    if (containers) ssh("docker stop ${containers.replaceAll("\n", " ")}")
 }
 
 static def dockerRemoveAllContainers(Closure ssh) {
-    ssh "docker rm \$(docker ps -aq)"
+    def containers = ssh("docker ps -aq")
+    if (containers) ssh("docker rm ${containers.replaceAll("\n", " ")}")
 }
 
 static def dockerRemoveAllOldTrainerAppImages(Closure ssh) {
