@@ -12,7 +12,7 @@ node("build") {
         }
         stage("integration test") { sh "mvn integration-test" }
         sh "docker save trainer/trainer-tracker > $workspace/trainer-tracker.tar"
-        archiveArtifacts "trainer-tracker.tar"
+        sh "cp $workspace/trainer-tracker.tar /tmp/trainer-tracker.tar"
     } catch(e) {
         println "Build error:\n $e"
     } finally {
@@ -26,14 +26,13 @@ node("build") {
 }
 
 node("master") {
-//    def ssh = { cmd -> sh(returnStdout: true, script: cmd) }
-//    sh "scp build:/tmp/trainer-tracker.tar $workspace/trainer-tracker.tar"
-//    sh "scp $workspace/trainer-tracker.tar uat:/tmp/trainer-tracker.tar"
+    def ssh = { cmd -> sh(returnStdout: true, script: cmd) }
+    sh "scp build:/tmp/trainer-tracker.tar $workspace/trainer-tracker.tar"
+    sh "scp $workspace/trainer-tracker.tar uat:/tmp/trainer-tracker.tar"
 }
 
 node("uat") {
-    println "downloading docker image"
-    sh "wget http://bob:youshallnotpass@jenkins:8080/job/tracker-docker/lastSuccessfulBuild/artifact/trainer-tracker.tar"
+    sh "cp /tmp/trainer-tracker.tar $workspace/trainer-tracker.tar"
     sh "ls -l"
 //    sh "docker load /tmp/trainer-tracker.tar"
 //    sh "docker images"
