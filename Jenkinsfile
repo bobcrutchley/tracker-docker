@@ -11,9 +11,10 @@ node("build") {
             sleep 1
         }
         stage("integration test") { sh "mvn integration-test" }
-        sh "docker save trainer/trainer-tracker > /tmp/trainer-tracker.tar"
+        sh "docker save trainer/trainer-tracker > $workspace/trainer-tracker.tar"
+        archiveArtifacts "$workspace/trainer-tracker.tar"
     } catch(e) {
-
+        println "Build error:\n $e"
     } finally {
         stage("clean up") {
             dockerStopAllContainers(ssh)
@@ -25,14 +26,14 @@ node("build") {
 }
 
 node("master") {
-    def ssh = { cmd -> sh(returnStdout: true, script: cmd) }
-    sh "scp build:/tmp/trainer-tracker.tar $workspace/trainer-tracker.tar"
-    sh "scp $workspace/trainer-tracker.tar uat:/tmp/trainer-tracker.tar"
+//    def ssh = { cmd -> sh(returnStdout: true, script: cmd) }
+//    sh "scp build:/tmp/trainer-tracker.tar $workspace/trainer-tracker.tar"
+//    sh "scp $workspace/trainer-tracker.tar uat:/tmp/trainer-tracker.tar"
 }
 
 node("uat") {
-    sh "docker load /tmp/trainer-tracker.tar"
-    sh "docker images"
+//    sh "docker load /tmp/trainer-tracker.tar"
+//    sh "docker images"
 }
 
 static def dockerRunTrainerApp(Closure ssh) {
