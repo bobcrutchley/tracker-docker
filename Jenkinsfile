@@ -27,8 +27,9 @@ node("build") {
 
 node("master") {
     def ssh = { cmd -> sh(returnStdout: true, script: cmd) }
-    sh "scp build:/tmp/trainer-tracker.tar $workspace/trainer-tracker.tar"
-    sh "scp $workspace/trainer-tracker.tar uat:/tmp/trainer-tracker.tar"
+    def noHostCheck = "-o StrictHostKeyChecking=no"
+    sh "scp $noHostCheck build:/tmp/trainer-tracker.tar $workspace/trainer-tracker.tar"
+    sh "scp $noHostCheck $workspace/trainer-tracker.tar uat:/tmp/trainer-tracker.tar"
 }
 
 node("uat") {
