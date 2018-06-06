@@ -32,6 +32,9 @@ node("master") {
 }
 
 node("uat") {
+    println "downloading docker image"
+    sh "wget http://jenkins:8080/job/tracker-docker/lastSuccessfulBuild/artifact/trainer-tracker.tar"
+    sh "ls -l"
 //    sh "docker load /tmp/trainer-tracker.tar"
 //    sh "docker images"
 }
